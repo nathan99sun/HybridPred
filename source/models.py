@@ -48,7 +48,7 @@ class AutoEncoder_ElasticNet(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
     
-    def fit(self, train_data, lr = None, epochs = None, batch_size = None):
+    def fit(self, train_data, lr = None, epochs = None, batch_size = None, log_loss=False, prediction_weight = 0.1, decoding_weight = 1):
 
         # Use this to overwrite the lr and epochs defined with the model
         if lr is None: lr = self.lr
@@ -67,7 +67,10 @@ class AutoEncoder_ElasticNet(nn.Module):
 
                 outputs = self.forward(train_inputs)
                 predictions = self.elastic_net_predict(train_inputs)
-                loss = loss_function(train_labels, predictions[:, 0]) + loss_function(train_inputs, outputs)
+                if log_loss:
+                    loss = loss_function(train_labels, predictions[:, 0])*prediction_weight + loss_function(train_inputs, outputs)*decoding_weight
+                else:
+                    loss = loss_function(10**train_labels, 10**predictions[:, 0])*prediction_weight + loss_function(train_inputs, outputs)*decoding_weight
                 loss += self.elastic_net_loss()*self.en_lambda
 
                 loss.backward()
