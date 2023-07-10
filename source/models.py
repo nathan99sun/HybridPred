@@ -73,5 +73,5 @@ class AutoEncoder_ElasticNet(nn.Module):
                 loss.backward()
                 optimiser.step()
                 
-            if ep % int(self.epochs / 10) == 0:
-                print(f"Epoch {ep}/{self.epochs}, loss: {loss.item():.2f}")
+            if ep % int(epochs / 10) == 0:
+                print(f"Epoch {ep}/{epochs}, loss: {loss.item():.2f}")
