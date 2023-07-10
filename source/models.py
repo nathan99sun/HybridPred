@@ -48,17 +48,18 @@ class AutoEncoder_ElasticNet(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
     
-    def fit(self, train_data, lr = None, epochs = None):
+    def fit(self, train_data, lr = None, epochs = None, batch_size = None):
 
         # Use this to overwrite the lr and epochs defined with the model
         if lr is None: lr = self.lr
         if epochs is None: epochs = self.epochs
+        if batch_size is None: batch_size = self.batch_size
 
         optimiser = torch.optim.Adam(self.parameters(), lr=lr)
         self.train()
         loss_function = nn.MSELoss()
-        train_loader = DataLoader(train_data, batch_size=self.batch_size, shuffle=True)
-        
+        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+
         for ep in range(epochs):
             for batch in train_loader:
                 optimiser.zero_grad()
