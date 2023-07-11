@@ -61,7 +61,7 @@ class AutoEncoder_ElasticNet(nn.Module):
         mses[1] = np.sqrt(mses[1] / len(test_ind))
         mses[2] = np.sqrt(mses[2] / len(secondary_ind))
 
-        for mse, label in zip(mses, ["train", "test", "sec"]):
+        for mse, label in zip(mses, ["\ntrain", "test", "sec"]):
             print(label, "\t", mse[0])
 
 
@@ -118,17 +118,19 @@ class AutoEncoder_ElasticNet(nn.Module):
                     predictions = self.elastic_net_predict(train_inputs)
 
                     if log_loss:
-                        loss = loss_function(train_labels, predictions[:, 0])*prediction_weight 
+                        prediction_loss = loss_function(train_labels, predictions[:, 0])*prediction_weight 
                     else:
-                        loss = loss_function(10**train_labels, 10**predictions[:, 0])*prediction_weight
-                    loss += self.elastic_net_loss()*en_weight + loss_function(train_inputs, outputs)*decoding_weight
+                        prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])*prediction_weight
+                    decoding_loss = loss_function(train_inputs, outputs)*decoding_weight
+                    en_loss = self.elastic_net_loss()*en_weight
+                    loss = en_loss + decoding_loss + prediction_loss
 
                     optimiser.zero_grad()
                     loss.backward()
                     optimiser.step()
 
                 if verbose:    
-                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, loss: {loss.item():.2f}")
+                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, \tdecoding loss: {decoding_loss.item():.2f},  \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
 
             if verbose: self.evaluate(x, y)
             if plots:
