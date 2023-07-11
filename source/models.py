@@ -1,16 +1,17 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
+from data_split import *
+import matplotlib.pyplot as plt
+plt.rcParams["figure.figsize"] = (18,7)
 
 class AutoEncoder_ElasticNet(nn.Module):
-    def __init__(self, n_features, n_cycles=49, alpha=0.5, lr = 1e-3, epochs = 500, batch_size=16):
+    def __init__(self, n_features, n_cycles=49, alpha=0.5):
         super(AutoEncoder_ElasticNet, self).__init__()
 
         self.alpha = alpha
         self.n_features = n_features
-        self.lr = lr
-        self.epochs = epochs
-        self.batch_size = batch_size
+        self.n_cycles = n_cycles
 
         self.encoder = nn.Sequential(
             nn.Linear(n_features*n_cycles, n_features*32),
@@ -47,11 +48,52 @@ class AutoEncoder_ElasticNet(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
     
+    def evaluate(self, x, y):
+        mses = [0.0, 0.0, 0.0]
+        for i in train_ind:
+            mses[0] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+        for i in test_ind:
+            mses[1] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+        for i in secondary_ind:
+            mses[2] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
 
-    def fit(self, train_data, train_policy, verbose = True, log_loss = False):
+        mses[0] = np.sqrt(mses[0] / len(train_ind))
+        mses[1] = np.sqrt(mses[1] / len(test_ind))
+        mses[2] = np.sqrt(mses[2] / len(secondary_ind))
+
+        for mse, label in zip(mses, ["train", "test", "sec"]):
+            print(label, "\t", mse[0])
+
+
+    def plotter(self, x, y, id):
+        fig, axs = plt.subplots(1, 2)
+        for i in range(self.n_features):
+            axs[0].plot(x[id].detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], 
+                        self.forward(x[id]).detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], ".", label = "feature {}".format(i+1))
+        axs[0].plot(np.linspace(-5.5, 1.5, 3), np.linspace(-5.5, 1.5, 3), "k", alpha = 0.5)
+
+        axs[0].legend()
+        axs[0].set_xlabel("True input")
+        axs[0].set_ylabel("Decoded input")
+        axs[0].set_title("Decoder performance, cell "+str(id))
+
+        axs[1].plot(y[train_ind], self.elastic_net_predict(x[train_ind]).detach().numpy(), ".", label = "train")
+        axs[1].plot(y[test_ind], self.elastic_net_predict(x[test_ind]).detach().numpy(), ".", label = "test")
+        axs[1].plot(y[secondary_ind], self.elastic_net_predict(x[secondary_ind]).detach().numpy(), ".", label = "secondary")
+        axs[1].plot(np.linspace(2.15, 3.4, 3), np.linspace(2.15, 3.4, 3), "k", alpha = 0.5)
+
+        axs[1].legend()
+        axs[1].set_xlabel("True input")
+        axs[1].set_ylabel("Decoded input")
+        axs[1].set_title("Prediction performance")
+
+        plt.show()
+
+    def fit(self, x, y, train_policy, verbose = True, plots = True, log_loss = False):
 
         self.train()
         loss_function = nn.MSELoss()
+        train_data = TensorDataset(torch.Tensor(x[train_ind]),torch.Tensor(y[train_ind]))
 
         num_stages = train_policy["num_stages"]
         for stage in range(num_stages):
@@ -87,4 +129,8 @@ class AutoEncoder_ElasticNet(nn.Module):
 
                 if verbose:    
                     if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, loss: {loss.item():.2f}")
+
+            if verbose: self.evaluate(x, y)
+            if plots:
+                self.plotter(x, y, 30)
 
