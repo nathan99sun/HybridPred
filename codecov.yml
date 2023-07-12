@@ -1,4 +1,0 @@
-ignore:
-  - "setup.py"
-  - "YOUR_PACKAGE_NAME/log.py" # Only use for debug
-  - "YOUR_PACKAGE_NAME/tests/"
