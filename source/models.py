@@ -17,14 +17,10 @@ class AutoEncoder_ElasticNet(nn.Module):
             nn.Linear(n_features*n_cycles, n_features*32),
             nn.ReLU(),
             nn.Linear(n_features*32, n_features*16),
-            # nn.ReLU(),
-            # nn.Linear(n_features*16, n_features*8),
             nn.ReLU()
         )
 
         self.decoder = nn.Sequential(
-            # nn.Linear(n_features*8, n_features*16),
-            # nn.ReLU(),
             nn.Linear(n_features*16, n_features*32),
             nn.ReLU(),
             nn.Linear(n_features*32, n_features*n_cycles)
@@ -40,6 +36,7 @@ class AutoEncoder_ElasticNet(nn.Module):
         return (1-self.alpha)/2 * l2_norm + self.alpha * l1_norm
     
     def elastic_net_predict(self, x):
+        self.eval()
         return self.prediction(self.encoder(x))
     
     def forward(self, x):
@@ -98,7 +95,7 @@ class AutoEncoder_ElasticNet(nn.Module):
         num_stages = train_policy["num_stages"]
         for stage in range(num_stages):
 
-            if verbose: print("\nStage {}:\n".format(stage+1))
+            if verbose: print("Stage {}:\n".format(stage+1))
 
             epochs = train_policy["epochs"][stage]
             lr = train_policy["learning_rates"][stage]
@@ -130,9 +127,66 @@ class AutoEncoder_ElasticNet(nn.Module):
                     optimiser.step()
 
                 if verbose:    
-                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, \tdecoding loss: {decoding_loss.item():.2f},  \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
+                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, \tdecoding loss: {decoding_loss.item():.2f},    \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
 
             if verbose: self.evaluate(x, y)
             if plots:
                 self.plotter(x, y, 30)
 
+
+
+class AutoEncoder_Individual(AutoEncoder_ElasticNet):
+    def __init__(self, n_features, n_cycles=49, alpha=0.5):
+        super(AutoEncoder_Individual, self).__init__(n_features=n_features, n_cycles=n_cycles)
+
+        self.alpha = alpha
+        self.n_features = n_features
+        self.n_cycles = n_cycles
+
+        self.encoders = nn.ModuleList([nn.Sequential(
+            nn.Linear(n_cycles, 32),
+            nn.ReLU(),
+            nn.Linear(32, 16),
+            nn.ReLU()
+        )]*n_features)
+
+        self.decoders = nn.ModuleList([nn.Sequential(
+            nn.Linear(16, 32),
+            nn.ReLU(),
+            nn.Linear(32, n_cycles)
+        )]*n_features)
+
+        self.prediction = nn.Linear(n_features*16, 1)
+
+    def forward(self, x):
+        self.eval()
+        if len(x.size()) == 1: x = x.expand(1, len(x))
+
+        x_features = []
+        for i in range(self.n_features):
+            x_features.append(x[:, i*self.n_cycles:(i+1)*self.n_cycles])
+
+        decoded_list = []
+        for i, encoder in enumerate(self.encoders):
+            z = encoder(x_features[i])
+            decoded = self.decoders[i](z)
+            decoded_list.append(decoded)
+
+        decoded_total = torch.cat(decoded_list, dim=1)
+
+        if decoded_total.size()[0] == 1: return decoded_total[0]
+        else: return decoded_total
+ 
+
+    def elastic_net_predict(self, x):
+        self.eval()
+        if len(x.size()) == 1: x = x.expand(1, len(x))
+        x_features = []
+        for i in range(self.n_features):
+            x_features.append(x[:, i*self.n_cycles:(i+1)*self.n_cycles])
+        z_list = []
+        for i, encoder in enumerate(self.encoders):
+            z = encoder(x_features[i])
+            z_list.append(z)  
+        z_total = torch.cat(z_list, dim=1)
+        return self.prediction(z_total)
