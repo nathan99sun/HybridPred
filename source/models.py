@@ -74,14 +74,14 @@ class AutoEncoder_ElasticNet(nn.Module):
         axs[0].set_ylabel("Decoded input")
         axs[0].set_title("Decoder performance, cell "+str(id))
 
-        axs[1].plot(y[train_ind], self.elastic_net_predict(x[train_ind]).detach().numpy(), ".", label = "train")
-        axs[1].plot(y[test_ind], self.elastic_net_predict(x[test_ind]).detach().numpy(), ".", label = "test")
-        axs[1].plot(y[secondary_ind], self.elastic_net_predict(x[secondary_ind]).detach().numpy(), ".", label = "secondary")
-        axs[1].plot(np.linspace(2.15, 3.4, 3), np.linspace(2.15, 3.4, 3), "k", alpha = 0.5)
+        axs[1].plot(10**y[train_ind], 10**self.elastic_net_predict(x[train_ind]).detach().numpy(), ".", label = "train")
+        axs[1].plot(10**y[test_ind], 10**self.elastic_net_predict(x[test_ind]).detach().numpy(), ".", label = "test")
+        axs[1].plot(10**y[secondary_ind], 10**self.elastic_net_predict(x[secondary_ind]).detach().numpy(), ".", label = "secondary")
+        axs[1].plot(np.linspace(200, 2400, 3), np.linspace(200, 2400, 3), "k", alpha = 0.5)
 
         axs[1].legend()
-        axs[1].set_xlabel("True input")
-        axs[1].set_ylabel("Decoded input")
+        axs[1].set_xlabel("True lifetime")
+        axs[1].set_ylabel("Predicted lifetime")
         axs[1].set_title("Prediction performance")
 
         plt.show()
@@ -115,19 +115,19 @@ class AutoEncoder_ElasticNet(nn.Module):
                     predictions = self.elastic_net_predict(train_inputs)
 
                     if log_loss:
-                        prediction_loss = loss_function(train_labels, predictions[:, 0])*prediction_weight 
+                        prediction_loss = loss_function(train_labels, predictions[:, 0])
                     else:
-                        prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])*prediction_weight
-                    decoding_loss = loss_function(train_inputs, outputs)*decoding_weight
-                    en_loss = self.elastic_net_loss()*en_weight
-                    loss = en_loss + decoding_loss + prediction_loss
+                        prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])
+                    decoding_loss = loss_function(train_inputs, outputs)
+                    en_loss = self.elastic_net_loss()
+                    loss = en_loss*en_weight + decoding_loss*decoding_weight + prediction_loss*prediction_weight
 
                     optimiser.zero_grad()
                     loss.backward()
                     optimiser.step()
 
                 if verbose:    
-                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs}, \tdecoding loss: {decoding_loss.item():.2f},    \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
+                    if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs},   \tdecoding loss: {decoding_loss.item():.2f},    \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
 
             if verbose: self.evaluate(x, y)
             if plots:
@@ -138,10 +138,6 @@ class AutoEncoder_ElasticNet(nn.Module):
 class AutoEncoder_Individual(AutoEncoder_ElasticNet):
     def __init__(self, n_features, n_cycles=49, alpha=0.5):
         super(AutoEncoder_Individual, self).__init__(n_features=n_features, n_cycles=n_cycles)
-
-        self.alpha = alpha
-        self.n_features = n_features
-        self.n_cycles = n_cycles
 
         self.encoders = nn.ModuleList([nn.Sequential(
             nn.Linear(n_cycles, 32),
