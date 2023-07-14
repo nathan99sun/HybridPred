@@ -66,23 +66,27 @@ class AutoEncoder_ElasticNet(nn.Module):
         fig, axs = plt.subplots(1, 2)
         for i in range(self.n_features):
             axs[0].plot(x[id].detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], 
-                        self.forward(x[id]).detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], ".", label = "feature {}".format(i+1))
+                        self.forward(x[id]).detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], "o", label = "feature {}".format(i+1))
         axs[0].plot(np.linspace(-5.5, 1.5, 3), np.linspace(-5.5, 1.5, 3), "k", alpha = 0.5)
 
-        axs[0].legend()
-        axs[0].set_xlabel("True input")
-        axs[0].set_ylabel("Decoded input")
-        axs[0].set_title("Decoder performance, cell "+str(id))
+        axs[0].legend(fontsize = 14)
+        axs[0].set_xlabel("True input", fontsize = 16)
+        axs[0].set_ylabel("Decoded input", fontsize = 16)
+        axs[0].tick_params(axis='x', labelsize=14)
+        axs[0].tick_params(axis='y', labelsize=14)
+        axs[0].set_title("Decoder performance, cell "+str(id), fontsize = 20)
 
-        axs[1].plot(10**y[train_ind], 10**self.elastic_net_predict(x[train_ind]).detach().numpy(), ".", label = "train")
-        axs[1].plot(10**y[test_ind], 10**self.elastic_net_predict(x[test_ind]).detach().numpy(), ".", label = "test")
-        axs[1].plot(10**y[secondary_ind], 10**self.elastic_net_predict(x[secondary_ind]).detach().numpy(), ".", label = "secondary")
+        axs[1].plot(10**y[train_ind], 10**self.elastic_net_predict(x[train_ind]).detach().numpy(), "o", label = "train")
+        axs[1].plot(10**y[test_ind], 10**self.elastic_net_predict(x[test_ind]).detach().numpy(), "o", label = "test")
+        axs[1].plot(10**y[secondary_ind], 10**self.elastic_net_predict(x[secondary_ind]).detach().numpy(), "o", label = "secondary")
         axs[1].plot(np.linspace(200, 2400, 3), np.linspace(200, 2400, 3), "k", alpha = 0.5)
 
-        axs[1].legend()
-        axs[1].set_xlabel("True lifetime")
-        axs[1].set_ylabel("Predicted lifetime")
-        axs[1].set_title("Prediction performance")
+        axs[1].legend(fontsize = 14)
+        axs[1].set_xlabel("True lifetime", fontsize = 16)
+        axs[1].tick_params(axis='x', labelsize=14)
+        axs[1].tick_params(axis='y', labelsize=14)
+        axs[1].set_ylabel("Predicted lifetime", fontsize = 16)
+        axs[1].set_title("Prediction performance", fontsize = 20)
 
         plt.show()
 
