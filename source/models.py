@@ -193,39 +193,51 @@ class AutoEncoder_Individual(AutoEncoder_ElasticNet):
     
 
 class AttentionModel(torch.nn.Module):
-    def __init__(self, d_model, feat_dim, vdim=1, num_heads=1, attn_model="softmax", beta=1):
+    def __init__(self, d_model, feat_dim, vdim=1, num_heads=1, attn_model="softmax", beta=1, skip_connect=0):
         super(AttentionModel, self).__init__()
         '''d_model: embedding dimension; can be chosen independently of input data dimensions
            feat_dim: number of cycles x number of features / length of collapsed input vector for one battery 
            vdim: dimension of output, 1 for our regression problem
            num_heads: default 1; can theoretically be increased for multihead attention (not supported by code yet)
            attn_model: default softmax; code also supports batch normalized attention with keyword "batch_norm"
-           beta: if using batch normalized attention, beta is the weight placed on the mean'''
+           beta: if using batch normalized attention, beta is the weight placed on the mean
+           skip_connect: whether or not to add a skip connection. If 0, no skip connection. If 1, H=AV+B where B
+           is a trainable projection of the input X. If 2, H=AV+V'''
         self.W_q = nn.Linear(feat_dim, d_model)
         self.W_k = nn.Linear(feat_dim, d_model)
         self.W_v = nn.Linear(feat_dim, vdim)
+        self.W_b = nn.Linear(feat_dim, vdim)
         self.d_model = d_model
         self.attn_model = attn_model
         self.beta = beta
+        self.skip_connect = skip_connect
 
     def reshape_input(self,X): 
         '''collapses cycle and feature dimensions into a single dimension'''
         return X.reshape(X.shape[0], -1)
 
-    def scaled_dot_product_attention(self, Q, K, V): 
+    def scaled_dot_product_attention(self, Q, K, V, B): 
         '''softmax attention'''
         attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_model)
         attn_probs = torch.softmax(attn_scores, dim=-1) # attention matrix, dimensionality (batch size, batch size)
         output = torch.matmul(attn_probs, V)
+        if self.skip_connect == 1:
+            output = output + B
+        elif self.skip_connect == 2:
+            output = output + V
         return output
     
-    def batch_normalized_attention(self, Q, K, V):
+    def batch_normalized_attention(self, Q, K, V, B):
         '''batch normalized attention'''
         mu = torch.mean(K,0)
         s = torch.std(K,0,correction=0)
         attn_scores = torch.matmul(torch.mul(Q-self.beta*mu,s), torch.mul(K-self.beta*mu,s).transpose(-2,-1)) / math.sqrt(self.d_model)
         attn_probs = torch.softmax(attn_scores, dim=-1) # attention matrix, dimensionality (batch size, batch size)
         output = torch.matmul(attn_probs, V)
+        if self.skip_connect == 1:
+            output = output + B
+        elif self.skip_connect == 2:
+            output = output + V
         return output
     
     def forward(self, X):
@@ -233,7 +245,8 @@ class AttentionModel(torch.nn.Module):
         Q = self.W_q(X) # create query matrix, dimensionality (batch size, d_model)
         K = self.W_k(X) # create key matrix, dimensionality (batch size, d_model)
         V = self.W_v(X) # create value matrix, dimensionality (batch size, 1)
+        B = self.W_b(X) # create matrix for skip connection
 
-        if self.attn_model=="softmax": attn_output = self.scaled_dot_product_attention(Q, K, V)
-        elif self.attn_model=="batch_norm": attn_output = self.batch_normalized_attention(Q, K, V)
+        if self.attn_model=="softmax": attn_output = self.scaled_dot_product_attention(Q, K, V, B)
+        elif self.attn_model=="batch_norm": attn_output = self.batch_normalized_attention(Q, K, V, B)
         return attn_output
