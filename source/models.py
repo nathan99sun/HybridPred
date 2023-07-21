@@ -116,6 +116,8 @@ class AutoEncoder_ElasticNet(nn.Module):
                 for batch in train_loader:
 
                     train_inputs, train_labels = batch
+                    train_inputs = train_inputs + torch.normal(mean=0,std=1,size=(train_inputs.size()[0], train_inputs.size()[1]))
+                    #print(train_inputs)
                     outputs = self.forward(train_inputs)
                     predictions = self.elastic_net_predict(train_inputs)
 
