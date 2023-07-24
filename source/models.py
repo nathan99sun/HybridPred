@@ -116,7 +116,7 @@ class AutoEncoder_ElasticNet(nn.Module):
                 for batch in train_loader:
 
                     train_inputs, train_labels = batch
-                    train_inputs = train_inputs + torch.normal(mean=0,std=1,size=(train_inputs.size()[0], train_inputs.size()[1]))
+                    # train_inputs = train_inputs + torch.normal(mean=0,std=1,size=(train_inputs.size()[0], train_inputs.size()[1]))
                     #print(train_inputs)
                     outputs = self.forward(train_inputs)
                     predictions = self.predict(train_inputs)
@@ -311,3 +311,21 @@ class AttentionModel2(torch.nn.Module):
         elif self.attn_model=="batch_norm": attn_output = self.batch_normalized_attention(Q, K, V, B)
         output = self.create_output(attn_output.transpose(-2,-1)) # dimensionality (batch size, 1, 1)
         return output
+    
+
+class AutoEncoder_Attention(AutoEncoder_ElasticNet):
+    def __init__(self, n_features, n_cycles, attention_embedding, alpha = 0.5):
+        super(AutoEncoder_Attention, self).__init__(n_features=n_features,
+                                                    n_cycles=n_cycles,
+                                                    alpha=alpha)
+        self.prediction = None
+        self.Attention = AttentionModel2(feat_dim=1, n_cycle=n_features*16, d_model = attention_embedding)
+        
+    def elastic_net_loss(self):
+        return torch.tensor([0.0])
+    
+    def predict(self, x):
+        encoding = self.encoder(x)
+        return self.Attention.forward(encoding)[..., 0]
+
+    
