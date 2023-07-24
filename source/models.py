@@ -322,7 +322,12 @@ class AutoEncoder_Attention(AutoEncoder_ElasticNet):
         self.Attention = AttentionModel2(feat_dim=1, n_cycle=n_features*16, d_model = attention_embedding)
         
     def elastic_net_loss(self):
-        return torch.tensor([0.0])
+        l1_sum = 0
+        l2_sum = 0
+        for layer in [self.Attention.W_q, self.Attention.W_k, self.Attention.W_v, self.Attention.W_b, self.Attention.create_output]:
+            l1_sum += layer.weight.abs().sum()
+            l2_sum += layer.weight.pow(2).sum()
+        return (1-self.alpha)/2 * l2_sum + self.alpha * l1_sum
     
     def predict(self, x):
         encoding = self.encoder(x)
