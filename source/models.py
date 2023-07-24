@@ -36,7 +36,7 @@ class AutoEncoder_ElasticNet(nn.Module):
 
         return (1-self.alpha)/2 * l2_norm + self.alpha * l1_norm
     
-    def elastic_net_predict(self, x):
+    def predict(self, x):
         self.eval()
         return self.prediction(self.encoder(x))
     
@@ -49,11 +49,11 @@ class AutoEncoder_ElasticNet(nn.Module):
     def evaluate(self, x, y):
         mses = [0.0, 0.0, 0.0]
         for i in train_ind:
-            mses[0] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[0] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
         for i in test_ind:
-            mses[1] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[1] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
         for i in secondary_ind:
-            mses[2] += (10**self.elastic_net_predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[2] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
 
         mses[0] = np.sqrt(mses[0] / len(train_ind))
         mses[1] = np.sqrt(mses[1] / len(test_ind))
@@ -77,9 +77,9 @@ class AutoEncoder_ElasticNet(nn.Module):
         axs[0].tick_params(axis='y', labelsize=14)
         axs[0].set_title("Decoder performance, cell "+str(id), fontsize = 20)
 
-        axs[1].plot(10**y[train_ind], 10**self.elastic_net_predict(x[train_ind]).detach().numpy(), "o", label = "train")
-        axs[1].plot(10**y[test_ind], 10**self.elastic_net_predict(x[test_ind]).detach().numpy(), "o", label = "test")
-        axs[1].plot(10**y[secondary_ind], 10**self.elastic_net_predict(x[secondary_ind]).detach().numpy(), "o", label = "secondary")
+        axs[1].plot(10**y[train_ind], 10**self.predict(x[train_ind]).detach().numpy(), "o", label = "train")
+        axs[1].plot(10**y[test_ind], 10**self.predict(x[test_ind]).detach().numpy(), "o", label = "test")
+        axs[1].plot(10**y[secondary_ind], 10**self.predict(x[secondary_ind]).detach().numpy(), "o", label = "secondary")
         axs[1].plot(np.linspace(200, 2400, 3), np.linspace(200, 2400, 3), "k", alpha = 0.5)
 
         axs[1].legend(fontsize = 14)
@@ -119,7 +119,7 @@ class AutoEncoder_ElasticNet(nn.Module):
                     train_inputs = train_inputs + torch.normal(mean=0,std=1,size=(train_inputs.size()[0], train_inputs.size()[1]))
                     #print(train_inputs)
                     outputs = self.forward(train_inputs)
-                    predictions = self.elastic_net_predict(train_inputs)
+                    predictions = self.predict(train_inputs)
 
                     if log_loss:
                         prediction_loss = loss_function(train_labels, predictions[:, 0])
@@ -180,7 +180,7 @@ class AutoEncoder_Individual(AutoEncoder_ElasticNet):
         else: return decoded_total
  
 
-    def elastic_net_predict(self, x):
+    def predict(self, x):
         self.eval()
         if len(x.size()) == 1: x = x.expand(1, len(x))
         x_features = []
