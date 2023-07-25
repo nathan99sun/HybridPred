@@ -30,10 +30,8 @@ class AutoEncoder_ElasticNet(nn.Module):
         self.prediction = nn.Linear(n_features*16, 1)
 
     def prediction_loss(self):
-
         l1_norm = self.prediction.weight.abs().sum()
         l2_norm = self.prediction.weight.pow(2).sum()
-
         return (1-self.alpha)/2 * l2_norm + self.alpha * l1_norm
     
     def predict(self, x):
@@ -62,9 +60,9 @@ class AutoEncoder_ElasticNet(nn.Module):
         for mse, label in zip(mses, ["\ntrain", "test", "sec"]):
             print(label, "\t", mse[0])
 
-
     def plotter(self, x, y, id):
         fig, axs = plt.subplots(1, 2)
+
         for i in range(self.n_features):
             axs[0].plot(x[id].detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], 
                         self.forward(x[id]).detach().numpy()[i*self.n_cycles:(i+1)*self.n_cycles], "o", label = "feature {}".format(i+1))
@@ -99,7 +97,6 @@ class AutoEncoder_ElasticNet(nn.Module):
 
         num_stages = train_policy["num_stages"]
         for stage in range(num_stages):
-
             if verbose: print("Stage {}:\n".format(stage+1))
 
             epochs = train_policy["epochs"][stage]
@@ -114,17 +111,13 @@ class AutoEncoder_ElasticNet(nn.Module):
 
             for ep in range(epochs):
                 for batch in train_loader:
-
                     train_inputs, train_labels = batch
                     # train_inputs = train_inputs + torch.normal(mean=0,std=1,size=(train_inputs.size()[0], train_inputs.size()[1]))
-                    #print(train_inputs)
                     outputs = self.forward(train_inputs)
                     predictions = self.predict(train_inputs)
 
-                    if log_loss:
-                        prediction_loss = loss_function(train_labels, predictions[:, 0])
-                    else:
-                        prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])
+                    if log_loss: prediction_loss = loss_function(train_labels, predictions[:, 0])
+                    else: prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])
                     decoding_loss = loss_function(train_inputs, outputs)
                     en_loss = self.prediction_loss()
                     loss = en_loss*en_weight + decoding_loss*decoding_weight + prediction_loss*prediction_weight
@@ -137,8 +130,7 @@ class AutoEncoder_ElasticNet(nn.Module):
                     if (ep+1) % int(epochs / 10) == 0: print(f"Epoch {ep+1}/{epochs},   \tdecoding loss: {decoding_loss.item():.2f},    \tprediction loss: {prediction_loss.item():.2f},  \treg_loss: {en_loss.item():.2f}")
 
             if verbose: self.evaluate(x, y)
-            if plots:
-                self.plotter(x, y, 30)
+            if plots: self.plotter(x, y, 30)
 
 
 class AutoEncoder_Individual(AutoEncoder_ElasticNet):
