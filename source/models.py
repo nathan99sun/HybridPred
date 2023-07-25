@@ -252,24 +252,39 @@ class AttentionModel2(torch.nn.Module):
            feat_dim: number of features in a cycle
            n_cycle: number of "cycles" outputted by the encoder / number of tokens, each of which has feat_dim features
            vdim: dimension of output, 1 for our regression problem
-           num_heads: default 1; can theoretically be increased for multihead attention (not supported by code yet)
+           num_heads: default 1
            attn_model: default softmax; code also supports batch normalized attention with keyword "batch_norm"
            beta: if using batch normalized attention, beta is the weight placed on the mean
            skip_connect: whether or not to add a skip connection. If 0, no skip connection. If 1, H=AV+B where B
            is a trainable projection of the input X. If 2, H=AV+V'''
+        assert d_model % num_heads == 0, "Embedding dimension (d_model) must be divisible by number of attention heads (num_heads)."
+        
         self.W_q = nn.Linear(feat_dim, d_model)
         self.W_k = nn.Linear(feat_dim, d_model)
-        self.W_v = nn.Linear(feat_dim, vdim)
-        self.W_b = nn.Linear(feat_dim, vdim)
+        self.W_v = nn.Linear(feat_dim, vdim*num_heads)
+        self.W_b = nn.Linear(feat_dim, vdim*num_heads)
+        self.W_o = nn.Linear(vdim*num_heads, vdim)
+
         self.create_output = nn.Linear(n_cycle,1) # final linear layer to collapse output
+
         self.d_model = d_model
+        self.vdim = vdim
+        self.num_heads = num_heads
+        #self.head_dim = d_model // num_heads
+        
         self.attn_model = attn_model
         self.beta = beta
         self.skip_connect = skip_connect
 
+    def split_heads(self, M):
+        batch_size, n_cycle, embed_dim = M.size()
+        head_dim = embed_dim // self.num_heads
+        M = M.view(batch_size, n_cycle, self.num_heads, head_dim).transpose(1,2)
+        return M
+
     def scaled_dot_product_attention(self, Q, K, V, B): 
         '''softmax attention'''
-        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_model)
+        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_model // self.num_heads)
         attn_probs = torch.softmax(attn_scores, dim=-1) # attention matrix, dimensionality (batch size, n_cycle, n_cycle)
         output = torch.matmul(attn_probs, V) # dimensionality (batch size, n_cycle, 1)
         if self.skip_connect == 1:
@@ -291,17 +306,24 @@ class AttentionModel2(torch.nn.Module):
             output = output + V
         return output
     
+    def combine_heads(self,attn_output):
+        batch_size, _, n_cycle,_ = attn_output.size()
+        attn_output = attn_output.transpose(1,2).view(batch_size, n_cycle, self.num_heads*self.vdim)
+        return self.W_o(attn_output)
+    
     def forward(self, X):
         if len(X.size()) < 3:
             X = X[...,None] # add a feature dimension if there is none
-        Q = self.W_q(X) # create query matrix, dimensionality (batch size, n_cycle, d_model)
-        K = self.W_k(X) # create key matrix, dimensionality (batch size, n_cycle, d_model)
-        V = self.W_v(X) # create value matrix, dimensionality (batch size, n_cycle, 1)
-        B = self.W_b(X) # create matrix for skip connection
+        Q = self.split_heads(self.W_q(X)) # create query matrix, dimensionality (batch size, num_heads, n_cycle, d_model//num_heads)
+        K = self.split_heads(self.W_k(X)) # create key matrix, dimensionality (batch size, num_heads, n_cycle, d_model//num_heads)
+        V = self.split_heads(self.W_v(X)) # create value matrix, dimensionality (batch size, num_heads, n_cycle, 1)
+        B = self.split_heads(self.W_b(X)) # create matrix for skip connection, dimensionality (batch size, num_heads, n_cycle, 1)
 
+        # attn_output has dimensionality (batch_size, num_heads, n_cycle, 1)
         if self.attn_model=="softmax": attn_output = self.scaled_dot_product_attention(Q, K, V, B)
         elif self.attn_model=="batch_norm": attn_output = self.batch_normalized_attention(Q, K, V, B)
-        output = self.create_output(attn_output.transpose(-2,-1)) # dimensionality (batch size, 1, 1)
+        combined_output = self.combine_heads(attn_output)
+        output = self.create_output(combined_output.transpose(-2,-1)) # dimensionality (batch size, 1, 1)
         return output
     
 
