@@ -29,7 +29,7 @@ class AutoEncoder_ElasticNet(nn.Module):
 
         self.prediction = nn.Linear(n_features*16, 1)
 
-    def elastic_net_loss(self):
+    def prediction_loss(self):
 
         l1_norm = self.prediction.weight.abs().sum()
         l2_norm = self.prediction.weight.pow(2).sum()
@@ -126,7 +126,7 @@ class AutoEncoder_ElasticNet(nn.Module):
                     else:
                         prediction_loss = loss_function(10**train_labels, 10**predictions[:, 0])
                     decoding_loss = loss_function(train_inputs, outputs)
-                    en_loss = self.elastic_net_loss()
+                    en_loss = self.prediction_loss()
                     loss = en_loss*en_weight + decoding_loss*decoding_weight + prediction_loss*prediction_weight
 
                     optimiser.zero_grad()
@@ -321,7 +321,7 @@ class AutoEncoder_Attention(AutoEncoder_ElasticNet):
         self.prediction = None
         self.Attention = AttentionModel2(feat_dim=1, n_cycle=n_features*16, d_model = attention_embedding)
         
-    def elastic_net_loss(self):
+    def prediction_loss(self):
         l1_sum = 0
         l2_sum = 0
         for layer in [self.Attention.W_q, self.Attention.W_k, self.Attention.W_v, self.Attention.W_b, self.Attention.create_output]:
