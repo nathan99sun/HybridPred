@@ -47,11 +47,11 @@ class AutoEncoder_ElasticNet(nn.Module):
     def evaluate(self, x, y):
         mses = [0.0, 0.0, 0.0]
         for i in train_ind:
-            mses[0] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[0] += (10**self.predict(x[i].expand((1, *x[i].size()))).detach().numpy() - 10**y[i].detach().numpy())**2
         for i in test_ind:
-            mses[1] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[1] += (10**self.predict(x[i].expand((1, *x[i].size()))).detach().numpy() - 10**y[i].detach().numpy())**2
         for i in secondary_ind:
-            mses[2] += (10**self.predict(x[i]).detach().numpy() - 10**y[i].detach().numpy())**2
+            mses[2] += (10**self.predict(x[i].expand((1, *x[i].size()))).detach().numpy() - 10**y[i].detach().numpy())**2
 
         mses[0] = np.sqrt(mses[0] / len(train_ind))
         mses[1] = np.sqrt(mses[1] / len(test_ind))
