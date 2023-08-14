@@ -9,7 +9,7 @@ Overview
 
 <div align="center">
 
-$project
+Project
 ========
 
 *Description of project here*
