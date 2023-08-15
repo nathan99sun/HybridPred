@@ -3,9 +3,6 @@ Overview
 
 The following is the code package for "A Physics-Informed Model Predicting Cycle Life of Lithium Ion Batteries," sponsored by Toyota and the Instutitue of Pure and Applied Mathematics under the RIPS 2023 REU.
 
-===
-
-
 <div align="center">
 
 Project
@@ -17,7 +14,7 @@ Accurately measuring the cycle lifetime of a commercial lithium-ion battery is c
 Usage example
 -------------
 
-Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/toyota-rips.
+Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/HybridPred.
 
 Contributors
 -----------
