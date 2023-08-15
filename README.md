@@ -27,22 +27,19 @@ Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. 
 
 ## Contributors
 
-
-<ul style="list-style: none;">
-    <li>Daniel Nicolae </li>
+    Daniel Nicolae 
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <li>Sara Sameer</li>
+    Sara Sameer
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <li>Nathan Sun</li>
+    Nathan Sun
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white">
-    <li>Karena Yan </li>
+    Karena Yan 
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white">
-</ul>
 
 ## Acknowledgements
------------
+
 We benefited from Mattherix/template-python-package
