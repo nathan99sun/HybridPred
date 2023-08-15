@@ -27,7 +27,6 @@ Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. 
 
 ## Contributors
 
-  <br>
     Daniel Nicolae
   </br>
    Sara Sameer
@@ -35,8 +34,6 @@ Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. 
      Nathan Sun
   <br>
    Karena Yan
-  <br>
-   
       
 ## Acknowledgements
 
