@@ -17,8 +17,13 @@ Accurately measuring the cycle lifetime of a commercial lithium-ion battery is c
 Usage example
 -------------
 
+Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/toyota-rips.
 
 Contributors
 -----------
 
 Daniel Nicolae, Sara Sameer, Nathan Sun, Karena Yan
+
+Acknowledgements
+-----------
+We benefited from Mattherix/template-python-package
