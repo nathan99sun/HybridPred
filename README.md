@@ -26,20 +26,26 @@ Accurately measuring the cycle lifetime of a commercial lithium-ion battery is c
 Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/HybridPred.
 
 ## Contributors
-   <ul>
-    <li>Daniel Nicolae</li> 
+
+  <br>
+    Daniel Nicolae
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <li>Sara Sameer</li>
+  </br>
+   Sara Sameer
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-     <li>Nathan Sun </li>
+    <br>
+     Nathan Sun
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white">
-    <li>Karena Yan</li>
+      <br>
+   Karena Yan
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    </ul> 
+    <br>
+   
+      
 ## Acknowledgements
 
 We benefited from Mattherix/template-python-package
