@@ -21,16 +21,14 @@ Accurately measuring the cycle lifetime of a commercial lithium-ion battery is c
    <img name = "Numpy" src = "https://img.shields.io/badge/numpy%20-%23013243.svg?&style=for-the-badge&logo=numpy&logoColor=white">
 </div>
 
-##Usage example
+## Usage example
 -------------
 
 Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/HybridPred.
 
-##Contributors
+## Contributors
 -----------
 
-Daniel Nicolae 
-Sara Sameer, Nathan Sun, Karena Yan
 <ul>
     <li>Daniel Nicolae </li>
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
@@ -45,6 +43,7 @@ Sara Sameer, Nathan Sun, Karena Yan
   <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
     <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white">
 </ul>
-Acknowledgements
+
+## Acknowledgements
 -----------
 We benefited from Mattherix/template-python-package
