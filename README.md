@@ -29,21 +29,13 @@ Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. 
 
   <br>
     Daniel Nicolae
-  <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-    <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
   </br>
    Sara Sameer
-  <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-    <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <br>
+  <br>
      Nathan Sun
-  <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-    <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white">
-      <br>
+  <br>
    Karena Yan
-  <a href="mailto:sarasameer991@gmail.com"><img name = "Gmail" src = "https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-    <a href="https://www.linkedin.com/in/sara-sameer-/"><img name = "LinkedIn" src = "https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-    <br>
+  <br>
    
       
 ## Acknowledgements
