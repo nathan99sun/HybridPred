@@ -26,12 +26,14 @@ Accurately measuring the cycle lifetime of a commercial lithium-ion battery is c
 Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/HybridPred.
 
 ## Contributors
-<br>
-    Daniel Nicolae
+
+
+  <br>
+  Daniel Nicolae
   </br>
    Sara Sameer
   <br>
-     Nathan Sun
+  Nathan Sun
   <br>
    Karena Yan
       
