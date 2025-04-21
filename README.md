@@ -1,7 +1,7 @@
 Overview
 ========
 
-The following is the code package for "Optimizing Cycle Life Prediction of Lithium-ion Batteries via a Physics-Informed Model," sponsored by Toyota and the Instutitue of Pure and Applied Mathematics under the RIPS 2023 REU.
+The following is the code package for _Optimizing Cycle Life Prediction of Lithium-ion Batteries via a Physics-Informed Model_, sponsored by Toyota and the Instutitue of Pure and Applied Mathematics under the RIPS 2023 REU.
 
 <div align="center">
 
