@@ -27,7 +27,7 @@ This repository contains the following folders: autoencoder, data, physics, clea
 ## Usage example
 
 
-Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. Code and data repository at https://github.com/nathan99sun/HybridPred.
+Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. _Optimizing Cycle Life Prediction of Lithium-ion Batteries via a Physics-Informed Model_, to appear in Transactions on Machine Learning Research (2025).
 
 ## Contributors
 
@@ -43,4 +43,4 @@ Nicolae, Daniel, Sara Sameer, Nathan Sun, Karena Yan. 2023. HybridPred package. 
       
 ## Acknowledgements
 
-We benefited from Mattherix/template-python-package
+We benefited from Mattherix/template-python-package. 
